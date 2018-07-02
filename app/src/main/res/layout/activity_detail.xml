@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".DetailActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@color/colorAccent"
+                app:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:textColor="@color/whiteText"
+                android:textSize="32sp" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <ImageView
+                android:id="@+id/poster_detail_image"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="16dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/title"
+                android:contentDescription="@string/poster_thumbnail" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toRightOf="@+id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/original_title"
+                    android:textSize="12sp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/originalTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="4dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_rating"
+                    android:textSize="12sp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/userRating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="4dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/release_date"
+                    android:textSize="12sp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/releaseDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="4dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/synopsis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/poster_detail_image"
+                android:text="@string/synopsis"
+                android:paddingTop="24dp"
+                android:paddingLeft="28dp"
+                android:paddingRight="28dp"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/overView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/synopsis"
+                android:paddingTop="4dp"
+                android:paddingLeft="28dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="24dp"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:paddingStart="28dp"
+                android:paddingEnd="16dp" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+</layout>
