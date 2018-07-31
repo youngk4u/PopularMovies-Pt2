@@ -32,7 +32,7 @@ public class NetworkUtils {
     /*************************************************
      API key : Please plug in your own API key below.
      *************************************************/
-    private static final String API_KEY = "fa2106b6ca5510fc495fd33f8533d081";
+    private static final String API_KEY = "";
     private static final String KEY_PARAM = "api_key";
 
     /* Base URL for themoviedb.org API */
