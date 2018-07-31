@@ -8,6 +8,7 @@
     <!-- Menu Strings for sorting by Popularity or Ratings -->
     <string name="action_sort_popularity">Popularity</string>
     <string name="action_sort_ratings">Ratings</string>
+    <string name="action_sort_favorite">Favorite</string>
 
     <!-- Poster image strings -->
     <string name="poster_image">Poster Image</string>
@@ -21,5 +22,19 @@
 
     <!-- Ratings value extra string -->
     <string name="out_of_ten">/10</string>
+
+    <!-- Favorites value extra string -->
+    <string name="favorite">FAVORITE</string>
+
+    <!-- Trailers value extra string -->
+    <string name="trailers">Trailers</string>
+    <string name="image_trailer">Image Trailer</string>
+    <string name="movie_title">Movie Title</string>
+
+    <!-- Reviews value extra string -->
+    <string name="review_author">Review Author</string>
+    <string name="review_content">Review Content</string>
+    <string name="movie_reviews">Movie Reviews</string>
+
 
 </resources>

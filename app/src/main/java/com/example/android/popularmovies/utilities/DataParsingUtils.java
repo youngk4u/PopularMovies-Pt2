@@ -1,10 +1,17 @@
 package com.example.android.popularmovies.utilities;
 
+import android.graphics.Movie;
 import android.util.Log;
-import com.example.android.popularmovies.data.Movie;
+
+import com.example.android.popularmovies.data.Review;
+import com.example.android.popularmovies.data.Trailer;
+import com.example.android.popularmovies.data.database.MovieEntry;
+import com.example.android.popularmovies.data.network.MovieResponse;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,22 +26,22 @@ public class DataParsingUtils {
      * @param jsonString a raw JSON String of Movie data
      * @return a List of Movie objects parsed from the jsonString
      */
-    public static List<Movie> getMovieDataListFromString(String jsonString) {
-
+    public static MovieResponse getMovieDataListFromString(String jsonString) {
         try {
             JSONObject obj = new JSONObject(jsonString);
             JSONArray jsonArray = obj.getJSONArray("results");
 
-            ArrayList<Movie> movieList = new ArrayList<>(jsonArray.length());
+            ArrayList<MovieEntry> movieEntryList = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     JSONObject movieJson = jsonArray.getJSONObject(i);
-                    movieList.add(parseMovieFromJson(movieJson));
+                    MovieEntry entry = parseMovieFromJson(movieJson);
+                    movieEntryList.add(entry);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            return movieList;
+            return new MovieResponse(movieEntryList);
         } catch (Throwable t) {
             Log.e(TAG, "Could not parse malformed JSON: \"" + jsonString + "\"");
             return null;
@@ -47,8 +54,9 @@ public class DataParsingUtils {
      * @param json the JSONObject to be parsed
      * @return the resulting Movie object
      */
-    private static Movie parseMovieFromJson(JSONObject json) {
+    private static MovieEntry parseMovieFromJson(JSONObject json) {
 
+        final String MOVIE_ID = "id";
         final String MOVIE_ORIGINAL_TITLE = "original_title";
         final String MOVIE_TITLE = "title";
         final String MOVIE_POSTER = "poster_path";
@@ -58,16 +66,90 @@ public class DataParsingUtils {
         final String MOVIE_POPULARITY = "popularity";
 
         try {
+            int id = json.optInt(MOVIE_ID, 0);
             String originalTitle = json.optString(MOVIE_ORIGINAL_TITLE, "N/A");
             String title = json.optString(MOVIE_TITLE, "N/A");
             String poster = json.optString(MOVIE_POSTER);
             String overview = json.optString(MOVIE_OVERVIEW, "N/A");
             String date = json.optString(MOVIE_DATE, "N/A");
 
-            double rating = json.optDouble(MOVIE_RATING, 0);
+            double userRating = json.optDouble(MOVIE_RATING, 0);
             double popularity = json.optDouble(MOVIE_POPULARITY, 0);
 
-            return new Movie(originalTitle, title, poster, overview, date, rating, popularity);
+            return new MovieEntry(id, originalTitle, title, poster, overview, date, userRating, popularity, 0);
+        } catch (Throwable t) {
+            Log.e(TAG, "Parse error with \"" + json + "\"");
+            return null;
+        }
+    }
+
+    public static List<Trailer> getTrailerListFromString(String jsonString) {
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            JSONArray jsonArray = obj.getJSONArray("results");
+
+            ArrayList<Trailer> trailerList = new ArrayList<>(jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    JSONObject trailerJson = jsonArray.getJSONObject(i);
+                    trailerList.add(parseTrailerFromJson(trailerJson));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return trailerList;
+        } catch (Throwable t) {
+            Log.e(TAG, "Could not parse malformed JSON: \"" + jsonString + "\"");
+            return null;
+        }
+    }
+
+    private static Trailer parseTrailerFromJson(JSONObject json) {
+
+        final String TRAILER_KEY = "key";
+        final String TRAILER_NAME = "name";
+
+        try {
+            String key = json.optString(TRAILER_KEY, "N/A");
+            String name = json.optString(TRAILER_NAME, "N/A");
+
+            return new Trailer(key, name);
+        } catch (Throwable t) {
+            Log.e(TAG, "Parse error with \"" + json + "\"");
+            return null;
+        }
+    }
+    public static List<Review> getReviewListFromString(String jsonString) {
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            JSONArray jsonArray = obj.getJSONArray("results");
+
+            ArrayList<Review> reviewList = new ArrayList<>(jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    JSONObject reviewJson = jsonArray.getJSONObject(i);
+                    reviewList.add(parseReviewFromJson(reviewJson));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return reviewList;
+        } catch (Throwable t) {
+            Log.e(TAG, "Could not parse malformed JSON: \"" + jsonString + "\"");
+            return null;
+        }
+    }
+
+    private static Review parseReviewFromJson(JSONObject json) {
+
+        final String REVIEW_AUTHOR = "author";
+        final String REVIEW_COMMENT = "content";
+
+        try {
+            String author = json.optString(REVIEW_AUTHOR, "N/A");
+            String comment = json.optString(REVIEW_COMMENT, "N/A");
+
+            return new Review(author, comment);
         } catch (Throwable t) {
             Log.e(TAG, "Parse error with \"" + json + "\"");
             return null;
