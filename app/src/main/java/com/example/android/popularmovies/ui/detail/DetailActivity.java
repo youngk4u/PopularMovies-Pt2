@@ -45,10 +45,11 @@ import java.util.List;
 
 public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerClickHandler {
 
-    public static final String MOVIE_ID = "MOVIE_ID";
+    private static final String MOVIE_ID = "MOVIE_ID";
+    private static final String SORT_BY = "sort_by";
     private static final String YOUTUBE_BASE = "https://www.youtube.com/watch?v=";
-    public static final int SORTED_BY_FAVORITE = 2;
-    public int mId = 0;
+    private static final int SORTED_BY_FAVORITE = 2;
+    private int SORTED_BY = 0;
     private int favored;
 
     private ActivityDetailBinding mDetailDataBinding;
@@ -72,7 +73,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         setContentView(R.layout.activity_detail);
 
         mDetailDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-        mId = getIntent().getIntExtra(MOVIE_ID, 0);
+        int mId = getIntent().getIntExtra(MOVIE_ID, 0);
+        SORTED_BY = getIntent().getIntExtra(SORT_BY, 0);
 
         dataSource = InjectorUtils.provideNetworkDataSource(getApplicationContext());
         DetailViewModelFactory factory = InjectorUtils.provideDetailViewModelFactory(this.getApplicationContext(), mId);
@@ -155,7 +157,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                     buttonStatus(button);
                     mMovieEntry.setFavored(favored);
                     executeUpdate(mMovieEntry);
-                    dataSource.fetchMovies(SORTED_BY_FAVORITE);
+                    if (SORTED_BY == 2) {
+                        dataSource.fetchMovies(SORTED_BY_FAVORITE);
+                    }
                 }
             }
         });

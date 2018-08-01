@@ -2,12 +2,15 @@ package com.example.android.popularmovies.ui.list;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +31,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.MoviesAdapterOnClickHandler {
 
+    private static final String MOVIE_ID = "MOVIE_ID";
     private static String SORT_BY = "sort_by";
     private static int POPULARITY = 0;
     private static int RATING = 1;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar mLoadingIndicator;
     private int mPosition = RecyclerView.NO_POSITION;
     private int SORTED_BY = -1;
+    private boolean menuChanged = false;
 
     private MainActivityViewModel mViewModel;
     private MainViewModelFactory factory;
@@ -45,6 +50,17 @@ public class MainActivity extends AppCompatActivity implements
     private MovieNetworkDataSource dataSource;
 
     private MovieResponse response;
+
+    /* Taken from Udacity Review */
+    public static int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int scalingFactor = 200;
+        int noOfColumns = (int) (dpWidth / scalingFactor);
+        if(noOfColumns < 2)
+            noOfColumns = 2;
+        return noOfColumns;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
         GridLayoutManager layoutManager =
-                new GridLayoutManager(this, 2);
+                new GridLayoutManager(this, calculateNoOfColumns(this));
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
@@ -74,10 +90,16 @@ public class MainActivity extends AppCompatActivity implements
                 //clearing old data
                 mMovieAdapter.RemoveAllData();
                 mMovieAdapter.swapList(movieEntries, response);
-
                 if (movieEntries != null && movieEntries.size() != 0 && mMovieAdapter != null) {
                     mMovieAdapter.setItemCount(movieEntries.size());
-                    mMovieAdapter.notifyDataSetChanged();
+                    if (!menuChanged) {
+                        mMovieAdapter.notifyDataSetChanged();
+                        menuChanged = false;
+                    } else {
+                        mPosition = 0;
+                        mRecyclerView.smoothScrollToPosition(mPosition);
+                        mMovieAdapter.notifyDataSetChanged();
+                    }
                     showView();
                 }
                 else {
@@ -95,9 +117,6 @@ public class MainActivity extends AppCompatActivity implements
         mViewModel.getMovies().observe(this, new Observer<List<MovieEntry>>() {
             @Override
             public void onChanged(@Nullable List<MovieEntry> movieEntries) {
-                if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-                mRecyclerView.smoothScrollToPosition(mPosition);
-                mMovieAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -124,7 +143,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(MovieEntry movieEntry) {
         Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
-        detailIntent.putExtra(DetailActivity.MOVIE_ID, movieEntry.getId());
+        detailIntent.putExtra(MOVIE_ID, movieEntry.getId());
+        detailIntent.putExtra(SORT_BY, SORTED_BY);
         startActivity(detailIntent);
     }
 
@@ -151,13 +171,15 @@ public class MainActivity extends AppCompatActivity implements
                 if (SORTED_BY != POPULARITY) {
                     SORTED_BY = POPULARITY;
                     response = dataSource.fetchMovies(SORTED_BY);
+                    menuChanged = true;
                 }
                 return true;
             // Respond to a click on the "Ratings" menu option
             case R.id.action_sort_by_ratings:
                 if (SORTED_BY != RATING) {
                     SORTED_BY = RATING;
-                     response = dataSource.fetchMovies(SORTED_BY);
+                    response = dataSource.fetchMovies(SORTED_BY);
+                    menuChanged = true;
                 }
                 return true;
             // Respond to a click on the "Favorite" menu option
@@ -165,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (SORTED_BY != FAVORITES) {
                     SORTED_BY = FAVORITES;
                     response = dataSource.fetchMovies(SORTED_BY);
+                    menuChanged = true;
                 }
                 return true;
             }
@@ -180,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+
         if (savedInstanceState.containsKey(SORT_BY)) {
             SORTED_BY = savedInstanceState.getInt(SORT_BY, 0);
         }
